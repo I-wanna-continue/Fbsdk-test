@@ -1,0 +1,69 @@
+<<html>
+<head>
+  <meta charset="UTF-8">
+  <title>fbSDKtest</title>
+</head>
+<body>
+    <div id="fb-root"></div>
+    <input type="button" value="Login" onclick="Login();" />
+    <div id="displayName"></div>   
+    <div id="userID"></div>
+    <div id="userEmail"></div>
+    <img id="profileImage"></img>
+    <div id="birthday"></div>
+    <div id="hometown"></div>
+    <input type="button" value="share" onclick="Share();" />
+</body>
+<script>
+  window.fbAsyncInit = function () {
+  FB.init({
+    appId: '479015928946659',
+    status: true,
+    cookie: true,
+    xfbml: true
+  });
+};
+
+(function (doc) {
+  var js;
+  var id = 'facebook-jssdk';
+  var ref = doc.getElementsByTagName('script')[0];
+  if (doc.getElementById(id)) {
+    return;
+  }
+  js = doc.createElement('script');
+  js.id = id;
+  js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js";
+  ref.parentNode.insertBefore(js, ref);
+}(document));
+
+function Login() {
+  FB.login(function (response) {
+    if (response.authResponse) {
+      FB.api('me?fields=id,name,email,picture,birthday,hometown', function (response) {
+        document.getElementById("displayName").innerHTML = response.name;        
+        document.getElementById("userID").innerHTML = response.id;
+        document.getElementById("userEmail").innerHTML = response.email;
+        document.getElementById("hometown").innerHTML = response.hometown.name;
+        FB.api('/me/picture?type=normal', function (response) {
+          document.getElementById("profileImage").setAttribute("src", response.data.url);          
+        });
+        document.getElementById("birthday").innerHTML = response.birthday 
+        console.log(response);      
+      });
+    } else {
+      alert("Login attempt failed!");
+    }
+  }, { scope: 'email,user_birthday,user_hometown' });
+}
+
+function Share() {
+FB.ui({
+  method: 'share',
+  href: 'http://happnings.se/#/',
+}, function(response){});
+}  
+  
+</script>
+</html>
